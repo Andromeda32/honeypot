@@ -1,9 +1,11 @@
 <?php
 
 use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\imageController;
 use App\Http\Controllers\UserController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\UploadImageController;
 
 /*
 |--------------------------------------------------------------------------
@@ -30,3 +32,11 @@ Route::middleware('auth:sanctum')->group(function () {
 });
 
 Route::resource('user', UserController::class)->middleware('auth:sanctum');
+
+Route::post('/upload-image', [UploadImageController::class, 'store'])->middleware('auth:sanctum');
+
+// I want to get the image by user id
+Route::get('/image/{filename}', [ImageController::class, 'image'])->middleware('auth:sanctum');
+
+// I want to get all logged users\
+Route::get('/users', [AuthController::class, 'getAllLoggedUsers'])->middleware('auth:sanctum');

@@ -43,15 +43,28 @@ class AuthController extends Controller
 
         $user = User::where('email', $request->email)->firstOrFail();
         $token = $user->createToken('auth_token')->plainTextToken;
+        // When the user loggs in, the logged in row will be set to 1 from users table
+        User::where('id', $user->id)->update(['is_logged_in' => true]);
 
         return $this->sendResponse(null, 'Successfully Login', 200, $token);
     }
+
 
     public function logout()
     {
         Auth::user()
             ->tokens()
             ->delete();
+        // When the user loggs out, the logged in row will be set to 0 from users table
+        User::where('id', Auth::id())->update(['is_logged_in' => false]);
+
         return $this->sendResponse(null, 'Successfully Logout', 200, null);
+    }
+
+    // Get all users who's logged in row is set to 1 in users table
+    public function getAllLoggedUsers()
+    {
+        $users = User::where('is_logged_in', 1)->get();
+        return $this->sendResponse(UserResource::collection($users), 'Successfully Get All Logged Users', 200);
     }
 }
